@@ -1,0 +1,18 @@
+const {readFileSync}=require('node:fs');const vm=require('node:vm');const assert=require('node:assert/strict');
+const source=readFileSync(__dirname+'/app.js','utf8');const scope={};vm.createContext(scope);
+vm.runInContext(source.slice(source.indexOf('const commonWebsites='),source.indexOf('function renderWebsiteSuggestions()')),scope);
+const names=value=>Array.from(scope.matchCommonWebsites(value),site=>site.name);
+assert.deepEqual(names(''),['锐捷通','学习通','智慧树','中国大学MOOC','学堂在线','雨课堂','智慧职教','蓝墨云班课','中国知网','智慧高教']);
+assert.deepEqual(names('学习'),['学习通']);assert.deepEqual(names('超星'),['学习通']);
+assert.deepEqual(names('  RJT '),['锐捷通']);assert.deepEqual(names('知到'),['智慧树']);
+assert.deepEqual(names('zhi hui shu'),['智慧树']);assert.deepEqual(names('自定义实验预约'),[]);
+const preset=scope.matchCommonWebsites('智慧树')[0];assert.equal(preset.url,'https://www.zhihuishu.com/');
+assert.equal(scope.matchCommonWebsites('锐捷通')[0].url,'https://www.rjt100.com/');
+assert.equal(scope.matchCommonWebsites('学习通')[0].url,'https://i.chaoxing.com/');
+assert.equal(scope.matchCommonWebsites('MOOC')[0].url,'https://www.icourse163.org/');
+assert.equal(scope.matchCommonWebsites('雨课堂')[0].url,'https://www.yuketang.cn/');
+assert.equal(scope.matchCommonWebsites('职教云')[0].url,'https://www.icve.com.cn/');
+assert.equal(scope.matchCommonWebsites('云班课')[0].url,'https://www.mosoteach.cn/');
+assert.equal(scope.matchCommonWebsites('CNKI')[0].url,'https://www.cnki.net/');
+assert.equal(scope.matchCommonWebsites('国家高等教育智慧教育平台')[0].url,'https://higher.smartedu.cn/');
+console.log('Website suggestion filtering, aliases, custom names and official URL mappings passed');

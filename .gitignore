@@ -1,0 +1,25 @@
+node_modules/
+*.log
+
+# Local credentials, generated backups, and editor state
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*token*.txt
+*secret*.txt
+*.local
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Development captures and personal deployment/research records
+/*.png
+/*.jpg
+/artifacts/
+/surveys/
+/DOMAIN-SETUP.md
+/start-public.ps1
+/website-research.md

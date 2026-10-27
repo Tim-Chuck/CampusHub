@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f2efea">
+<title>CampusHub · 我的学习入口</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="campus.css">
+<link rel="preload" href="/fonts/campus-sans-regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="interface.css">
+</head>
+<body>
+<aside>
+<a class="brand" href="./">
+<span class="brand-icon">c<span>h</span>
+</span>CampusHub<span class="beta">BETA</span>
+</a>
+<span class="device-badge">本机</span>
+<div class="nav-label">我的导航</div>
+<nav id="navigation" aria-label="主导航">
+</nav>
+<div class="nav-label courses-label">本学期课程 <button id="addCourse" aria-label="添加课程" title="添加课程">＋</button>
+</div>
+<nav id="courses">
+</nav>
+<button class="manage-courses" id="manageCourses">管理课程</button>
+<button class="device-transfer" data-open-sync aria-haspopup="dialog" aria-controls="syncDialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 8h15m-4-4 4 4-4 4M20 16H5m4-4-4 4 4 4"/></svg>同步码</button>
+<div class="sidebar-note">
+<span class="little-mark">↗</span>
+<b>让每一次学习，轻松开始。</b>
+<p>把散落的入口，整理成自己的秩序。</p>
+</div>
+<div class="local-status">
+<i>
+</i> 本地空间 · 自动保存</div>
+</aside>
+<main>
+<header>
+<div class="breadcrumb">本机空间 <span>/</span> <span id="crumb">首页</span>
+</div>
+<span class="device-status">仅保存在此浏览器</span>
+</header>
+<section class="content">
+<section id="campusPage" hidden></section>
+<section id="timetable" hidden aria-labelledby="scheduleHeading">
+<div class="schedule-heading">
+<div>
+<h1 id="scheduleHeading">我的课程表</h1>
+<p>一周的安排，清楚一点。</p>
+</div>
+<div class="schedule-actions">
+<button class="secondary" id="scheduleSettingsButton">学期设置</button>
+<button class="secondary" id="scheduleImportButton">↓ 导入课表</button>
+<button class="primary" id="scheduleAddButton">＋ 添加课程</button>
+</div>
+</div>
+<div class="schedule-controls">
+<div class="week-navigation">
+<button id="previousWeek" aria-label="上一周">‹</button>
+<div>
+<b id="scheduleWeekTitle">
+</b>
+<small id="scheduleWeekRange">
+</small>
+</div>
+<button id="nextWeek" aria-label="下一周">›</button>
+<button class="today-button" id="currentWeek">本周</button>
+</div>
+<span id="scheduleLessonCount">
+</span>
+</div>
+<div class="schedule-scroll" tabindex="0" aria-label="每周课程表，可横向滚动">
+<div class="schedule-day-headings" id="scheduleDays">
+</div>
+<div class="schedule-body" id="scheduleBody">
+</div>
+</div>
+<p class="schedule-footnote"><span class="mobile-schedule-hint">左右滑动查看整周 · </span>点击课程可编辑 · 时间均为北京时间</p>
+</section>
+<div id="home" class="home-canvas">
+<div id="homeEmpty" class="home-invitation">
+<span class="home-mark" aria-hidden="true">
+<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
+<path d="M9 7h15l7 7v19H9z"/>
+<path d="M24 7v8h7M14 21h12M20 15v12"/>
+</svg>
+</span>
+<h1>请添加你的科目</h1>
+<p>把每门课需要的网站，放在一起。</p>
+<button id="homeAddCourse" class="primary">＋ 添加科目</button>
+<button data-open-pack class="home-import-pack">导入同学分享的科目包</button>
+</div>
+<section id="homeSubjects" class="home-subjects" hidden aria-labelledby="homeSubjectsTitle">
+<div class="home-subjects-heading">
+<div>
+<h1 id="homeSubjectsTitle">我的科目</h1>
+<p id="homeCourseCount">
+</p>
+</div>
+<div class="page-actions"><button id="homeOrder" class="secondary" data-order-kind="courses" aria-haspopup="dialog" aria-controls="orderDialog">排序</button><button data-open-pack class="secondary">导入科目包</button><button id="homeAddSubject" class="primary">＋ 添加科目</button></div>
+</div>
+<div id="homeCourseGrid" class="home-course-grid">
+</div>
+</section>
+<section id="todayOverview" class="today-overview" hidden aria-labelledby="todayTitle"></section>
+</div>
+<div class="intro">
+<div>
+<h1 id="heading">全部网站</h1>
+<p id="subtitle">按科目整理的网站入口，点击卡片即可打开。</p>
+</div>
+<div class="intro-actions">
+<button class="secondary" id="addCourseMain">＋ 添加课程</button>
+<button class="primary" id="add">＋ <span>添加网站</span>
+</button>
+</div>
+</div>
+<div class="toolbar">
+<label class="search">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+<circle cx="10.5" cy="10.5" r="6.5"/>
+<path d="m16 16 4 4"/>
+</svg>
+<input id="search" placeholder="搜索网站、课程或备注…" aria-label="搜索网站">
+<kbd>/</kbd>
+</label>
+<select id="sort" aria-label="排列方式">
+<option value="default">自定义顺序</option>
+<option value="name">名称排序</option>
+<option value="newest">最近添加</option>
+</select>
+</div>
+<div id="purposeFilters" class="purpose-filters" role="group" aria-label="按使用情境筛选"></div>
+<div class="section-title">
+<h2 id="sectionName">全部网站</h2>
+<span id="count">
+</span>
+<button class="text-action" id="siteOrder" data-order-kind="sites" aria-haspopup="dialog" aria-controls="orderDialog">调整顺序</button>
+<button class="text-action" id="editCurrentCourse" hidden>编辑课程</button>
+<button class="text-action" id="exportCurrentCourse" hidden>导出科目包</button>
+<button class="text-action" id="addCourseTask" data-add-task hidden>＋ 添加任务</button>
+</div>
+<div id="grid" class="grid">
+</div>
+<footer>
+<span>CampusHub · 给学习一个清晰的入口</span>
+<span>本地预览版 / 数据保存在当前浏览器</span>
+</footer>
+</section>
+</main>
+<dialog id="mobileMenu" aria-labelledby="mobileMenuTitle">
+<div class="dialog-head"><h2 id="mobileMenuTitle">更多入口</h2><button class="close" aria-label="关闭更多入口">×</button></div>
+<div class="mobile-menu-links"><button data-view="all">全部网站 <span aria-hidden="true">↗</span></button><button data-view="archives">学期档案 <span aria-hidden="true">↗</span></button></div>
+<button class="secondary full-width mobile-sync" data-open-sync aria-haspopup="dialog" aria-controls="syncDialog">同步码 · 在设备间搬运数据</button>
+<div class="mobile-menu-subjects"><h3>我的科目</h3><div id="mobileMenuCourses"></div></div>
+<div class="mobile-menu-actions"><button class="secondary" id="mobileMoreManageCourses">管理科目</button><button class="primary" id="mobileMoreAddCourse">＋ 添加科目</button></div>
+</dialog>
+<dialog id="editor">
+<form id="form">
+<div class="dialog-head">
+<div>
+<small>YOUR LEARNING SHORTCUT</small>
+<h2 id="formTitle">添加网站</h2>
+</div>
+<button type="button" class="close" aria-label="关闭">×</button>
+</div>
+<label>网站名称<input name="name" required maxlength="60" autocomplete="off" placeholder="输入名称，或选择下方常用网站" aria-describedby="websiteSuggestionStatus">
+</label>
+<div class="website-presets">
+<div id="websiteSuggestions" class="website-suggestions" role="group" aria-label="常用网站">
+</div>
+<small id="websiteSuggestionStatus" class="input-help" role="status">选择一个，自动填写网站地址。</small>
+</div>
+<label>网站地址<input name="url" type="text" inputmode="url" autocomplete="url" autocapitalize="none" spellcheck="false" required placeholder="例如：rjt100.com 或 https://rjt100.com" aria-describedby="urlHelp">
+<small id="urlHelp" class="input-help">可直接填写域名，未填写协议时自动补全 https://</small>
+</label>
+<label>所属课程<select name="course">
+</select>
+</label>
+<label>用途备注<textarea name="note" rows="3" maxlength="200" placeholder="这个网站用来做什么？有什么需要注意的？">
+</textarea>
+</label>
+<fieldset class="purpose-field"><legend>使用情境 <span class="optional">可多选</span></legend><div id="sitePurposeChoices" class="choice-chips"></div></fieldset>
+<div class="form-actions">
+<button type="button" class="secondary close">取消</button>
+<button class="primary" type="submit">保存网站</button>
+</div>
+</form>
+</dialog>
+<dialog id="courseEditor" aria-labelledby="courseTitle">
+<form id="courseForm">
+<div class="dialog-head">
+<div>
+<small>ORGANIZE YOUR SEMESTER</small>
+<h2 id="courseTitle">添加课程</h2>
+</div>
+<button type="button" class="close" aria-label="关闭课程编辑">×</button>
+</div>
+<p class="dialog-description">为每一门课留一个位置，把相关网站放在一起。</p>
+<label>课程名称 <span class="required">*</span>
+<input name="courseName" required maxlength="30" placeholder="例如：线性代数" aria-describedby="courseError">
+</label>
+<p id="courseError" class="field-error" role="alert">
+</p>
+<fieldset class="colors-field">
+<legend>课程颜色</legend>
+<div id="courseColors">
+</div>
+</fieldset>
+<label>课程备注 <span class="optional">可选</span>
+<textarea name="courseNote" rows="2" maxlength="120" placeholder="例如：周二、周四上课，作业在学习通提交">
+</textarea>
+</label>
+<div class="form-actions">
+<button type="button" class="secondary close">取消</button>
+<button class="primary" id="courseSubmit" type="submit">创建课程</button>
+</div>
+</form>
+</dialog>
+<dialog id="courseManager" aria-labelledby="managerTitle">
+<div class="dialog-head">
+<div>
+<small>YOUR COURSES</small>
+<h2 id="managerTitle">管理课程</h2>
+</div>
+<button class="close" aria-label="关闭课程管理">×</button>
+</div>
+<p class="dialog-description">调整课程名称、颜色和备注，网站会跟随课程一起更新。<button id="managerOrder" class="text-action" data-order-kind="courses" aria-haspopup="dialog" aria-controls="orderDialog">调整科目顺序</button></p>
+<div id="courseList">
+</div>
+<button class="primary full-width" id="managerAddCourse">＋ 添加新课程</button>
+</dialog>
+<dialog id="removeCourseDialog" aria-labelledby="removeCourseTitle">
+<div class="dialog-head">
+<h2 id="removeCourseTitle">删除课程</h2>
+<button class="close" aria-label="取消删除课程">×</button>
+</div>
+<b id="removeCourseName">
+</b>
+<p class="dialog-description" id="removeCourseMessage">
+</p>
+<div class="form-actions">
+<button class="secondary close">取消</button>
+<button class="primary danger-fill" id="removeCourseConfirm">删除课程，保留网站</button>
+</div>
+</dialog>
+<dialog id="pinDialog" aria-labelledby="pinTitle">
+<form id="pinForm">
+<div class="dialog-head">
+<div>
+<small>PRIVATE ACCESS</small>
+<h2 id="pinTitle">输入六位查看密码</h2>
+</div>
+<button type="button" class="close" aria-label="取消验证">×</button>
+</div>
+<p class="dialog-description" id="pinDescription">
+</p>
+<label>六位数字密码<input class="pin-input" name="pin" type="password" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" autocomplete="off" required placeholder="······" aria-describedby="pinError">
+</label>
+<label id="pinConfirmation">再次输入密码<input class="pin-input" name="pinConfirm" type="password" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" autocomplete="off" placeholder="······">
+</label>
+<p id="pinError" class="field-error" role="alert">
+</p>
+<div class="form-actions">
+<button type="button" class="secondary close">取消</button>
+<button type="submit" class="primary" id="pinSubmit">验证并继续</button>
+</div>
+</form>
+</dialog>
+<dialog id="credentialDialog" aria-labelledby="credentialTitle">
+<form id="credentialForm" autocomplete="off">
+<div class="dialog-head">
+<div>
+<small>ENCRYPTED ON THIS DEVICE</small>
+<h2 id="credentialTitle">记录账号密码</h2>
+</div>
+<button type="button" class="close" aria-label="关闭账密编辑">×</button>
+</div>
+<p class="dialog-description">
+<b id="credentialSiteName">
+</b> · 保存在当前浏览器，卡片默认隐藏账密。</p>
+<label>网站账号<input name="recordUsername" required maxlength="200" autocomplete="off" spellcheck="false" placeholder="输入该网站使用的账号">
+</label>
+<label>网站密码<input name="recordPassword" type="password" required maxlength="500" autocomplete="new-password" placeholder="输入该网站使用的密码">
+</label>
+<p id="credentialError" class="field-error" role="alert">
+</p>
+<div class="form-actions">
+<button type="button" class="secondary close">取消</button>
+<button type="submit" id="credentialSubmit" class="primary">加密保存</button>
+</div>
+</form>
+</dialog>
+<dialog id="lessonDialog" aria-labelledby="lessonTitle">
+<form id="lessonForm">
+<div class="dialog-head">
+<div>
+<small>YOUR WEEK, YOUR WAY</small>
+<h2 id="lessonTitle">添加课程安排</h2>
+</div>
+<button type="button" class="close" aria-label="关闭课程安排">×</button>
+</div>
+<button type="button" class="text-action lesson-text-import" id="lessonTextImport">用 ICS 文本生成文件</button>
+<label>课程名称<input name="title" list="scheduleSubjects" required maxlength="100" placeholder="例如：高等数学">
+<datalist id="scheduleSubjects">
+</datalist>
+</label>
+<div class="form-pair">
+<label>上课地点<input name="location" maxlength="150" placeholder="例如：教学楼 A301">
+</label>
+<label>任课教师 <span class="optional">可选</span>
+<input name="teacher" maxlength="60" placeholder="教师姓名">
+</label>
+</div>
+<div class="form-pair">
+<label>上课时间<input name="startTime" type="time" required>
+</label>
+<label>下课时间<input name="endTime" type="time" required>
+</label>
+</div>
+<label>重复方式<select name="repeat">
+<option value="weekly">每周重复</option>
+<option value="once">仅这一天</option>
+</select>
+</label>
+<div id="weeklyLessonFields">
+<div class="form-pair">
+<label>星期<select name="weekday">
+<option value="1">星期一</option>
+<option value="2">星期二</option>
+<option value="3">星期三</option>
+<option value="4">星期四</option>
+<option value="5">星期五</option>
+<option value="6">星期六</option>
+<option value="7">星期日</option>
+</select>
+</label>
+<label>单双周<select name="pattern">
+<option value="all">每周</option>
+<option value="odd">仅单周</option>
+<option value="even">仅双周</option>
+</select>
+</label>
+</div>
+<div class="form-pair">
+<label>开始周次<input name="startWeek" type="number" min="1" max="52" required>
+</label>
+<label>结束周次<input name="endWeek" type="number" min="1" max="52" required>
+</label>
+</div>
+</div>
+<label id="onceLessonField" hidden>上课日期<input name="date" type="date">
+</label>
+<label>课程颜色<select name="color">
+<option value="0">雾蓝</option>
+<option value="1">鼠尾草</option>
+<option value="2">陶土</option>
+<option value="3">灰紫</option>
+<option value="4">燕麦</option>
+</select>
+</label>
+<label>备注 <span class="optional">可选</span>
+<textarea name="note" rows="2" maxlength="1000" placeholder="补充上课信息">
+</textarea>
+</label>
+<p id="lessonError" class="field-error" role="alert">
+</p>
+<div id="lessonDeletePrompt" class="delete-prompt" hidden>
+<p>删除后将移除这条安排；每周课程会移除整条重复规则。</p>
+<button type="button" class="secondary" id="lessonDeleteCancel">取消</button>
+<button type="button" class="primary danger-fill" id="lessonDeleteConfirm">确认删除</button>
+</div>
+<div class="form-actions">
+<button type="button" class="secondary danger" id="lessonDelete" hidden>删除安排</button>
+<button type="button" class="secondary close">取消</button>
+<button class="primary" type="submit">保存安排</button>
+</div>
+</form>
+</dialog>
+<dialog id="scheduleSettingsDialog" aria-labelledby="scheduleSettingsTitle">
+<form id="scheduleSettingsForm">
+<div class="dialog-head">
+<h2 id="scheduleSettingsTitle">学期设置</h2>
+<button type="button" class="close" aria-label="关闭学期设置">×</button>
+</div>
+<p class="dialog-description">第一周从周一开始。修改后，每周重复的课程会按新的学期日期排列；日历导入的日期保持不变。</p>
+<label>第一周的周一<input name="semesterStart" type="date" required>
+</label>
+<label>学期周数<input name="weeks" type="number" required min="1" max="52">
+</label>
+<p id="scheduleSettingsError" class="field-error" role="alert">
+</p>
+<div class="form-actions">
+<button type="button" class="secondary close">取消</button>
+<button class="primary">保存设置</button>
+</div>
+</form>
+</dialog>
+<dialog id="scheduleImportDialog" aria-labelledby="scheduleImportTitle">
+<div class="dialog-head">
+<div>
+<small>BRING YOUR CLASSES TOGETHER</small>
+<h2 id="scheduleImportTitle">导入课程表</h2>
+</div>
+<button class="close" aria-label="关闭课表导入">×</button>
+</div>
+<p class="dialog-description">先预览再导入，合并到当前课表并跳过重复安排。</p>
+<div class="filter-tabs schedule-import-modes" role="group" aria-label="课表导入方式">
+<button type="button" class="selected" id="scheduleImportCalendarMode" aria-pressed="true" aria-controls="scheduleCalendarFields">链接 / ICS 文件</button>
+<button type="button" id="scheduleImportTextMode" aria-pressed="false" aria-controls="scheduleTextFields">ICS 代码文本</button>
+</div>
+<form id="scheduleImportForm">
+<div id="scheduleCalendarFields">
+<label>日历订阅 URL<input name="calendarUrl" type="text" inputmode="url" autocomplete="off" placeholder="https://…/calendar.ics 或 webcal://…">
+</label>
+<div class="import-file-row">
+<span>或从文件导入</span>
+<input name="calendarFile" type="file" accept=".ics,text/calendar" aria-label="选择 ICS 日历文件">
+</div>
+<p class="input-help">支持重复规则与排除日期；时间统一转换为北京时间。无需提供教务系统登录密码。</p>
+<p class="input-help">链接与文件仅导入一次，不会自动订阅更新。</p>
+</div>
+<div id="scheduleTextFields" hidden>
+<label>粘贴已有的 ICS 代码<textarea name="calendarText" rows="8" maxlength="2097152" spellcheck="false" autocapitalize="off" aria-describedby="scheduleTextHelp scheduleImportError" placeholder="BEGIN:VCALENDAR&#10;VERSION:2.0&#10;BEGIN:VEVENT&#10;...&#10;END:VEVENT&#10;END:VCALENDAR"></textarea></label>
+<p class="input-help" id="scheduleTextHelp">粘贴从 BEGIN:VCALENDAR 到 END:VCALENDAR 的完整文本，直接保存为 UTF-8 的 .ics 文件，保留原有课程、时区和重复规则。下载在当前浏览器完成。</p>
+<button type="button" class="primary full-width" id="scheduleImportDownload">生成并下载 .ics 文件</button>
+<p class="input-help">也可以选择下方日期范围，预览后直接导入 CampusHub 课表。</p>
+</div>
+<div class="form-pair">
+<label>导入开始日期<input name="from" type="date" required></label>
+<label>导入结束日期<input name="to" type="date" required></label>
+</div>
+<p id="scheduleImportError" class="field-error" role="alert" tabindex="-1">
+</p>
+<button type="submit" class="secondary full-width" id="scheduleImportPreview">读取并预览</button>
+</form>
+<section id="scheduleImportResults" hidden>
+<div class="import-summary">
+<b id="scheduleImportSummary">
+</b>
+<label>
+<input id="scheduleImportSelectAll" type="checkbox" checked> 全选新增课程</label>
+</div>
+<p id="scheduleImportWarnings" class="input-help">
+</p>
+<div id="scheduleImportList">
+</div>
+<div class="form-actions">
+<button class="secondary close">取消</button>
+<button class="primary" id="scheduleImportConfirm">确认导入</button>
+</div>
+</section>
+</dialog>
+<dialog id="taskDialog" aria-labelledby="taskTitle"><form id="taskForm">
+<div class="dialog-head"><h2 id="taskTitle">添加任务</h2><button type="button" class="close" aria-label="关闭任务编辑">×</button></div>
+<details class="task-notice" id="taskNoticePanel"><summary>粘贴通知，识别网址和截止时间</summary><div class="task-notice-body">
+<label for="taskNoticeText">通知原文<textarea id="taskNoticeText" rows="4" maxlength="2000" placeholder="例如：请于10月30日晚上8点前提交材料：https://example.edu/apply" aria-describedby="taskNoticeHelp"></textarea></label>
+<p class="input-help" id="taskNoticeHelp">仅在本机识别，原文保留在备注中。今天、明天、本周等按北京时间理解。</p>
+<button type="button" class="secondary" id="taskNoticeRecognize">一键识别并填入</button>
+<p class="input-help notice-status" id="taskNoticeStatus" role="status" aria-live="polite"></p>
+<label id="taskNoticeDatesLabel" hidden>选择截止时间<select id="taskNoticeDates"></select></label>
+<label id="taskNoticeLinksLabel" hidden>选择任务网址<select id="taskNoticeLinks"></select></label>
+</div></details>
+<label>任务名称<input name="title" required maxlength="100" placeholder="例如：提交高数第二章作业"></label>
+<div class="form-pair"><label>所属科目<select name="course"></select></label><label>截止时间 · 北京时间<input name="due" type="datetime-local" required></label></div>
+<label>关联网站 <span class="optional">可选</span><select name="siteId"></select><small class="input-help">保存后可从任务直接打开提交网站。</small></label>
+<label>任务网址 <span class="optional">可选</span><input name="url" type="text" inputmode="url" maxlength="8192" placeholder="识别通知中的网址，也可手动填写"><small class="input-help">填写后优先使用此网址，可直接从任务打开。</small></label>
+<label>备注 <span class="optional">可选</span><textarea name="note" rows="2" maxlength="2000" placeholder="作业要求、通知原文、需要准备的材料…"></textarea></label>
+<p class="field-error" id="taskError" role="alert"></p>
+<div class="delete-prompt" id="taskDeletePrompt" hidden><p>确认删除这条任务？</p><button type="button" class="secondary" data-cancel-task-delete>取消</button><button type="button" class="primary danger-fill" id="taskDeleteConfirm">确认删除任务</button></div>
+<div class="form-actions"><button type="button" class="secondary danger" id="taskDelete" hidden>删除任务</button><button type="button" class="secondary close">取消</button><button class="primary">保存任务</button></div>
+</form></dialog>
+<dialog id="campusLinkDialog" aria-labelledby="campusLinkTitle"><form id="campusLinkForm">
+<div class="dialog-head"><h2 id="campusLinkTitle">添加校园入口</h2><button type="button" class="close" aria-label="关闭校园入口编辑">×</button></div>
+<label>入口名称<input name="name" required maxlength="60" placeholder="例如：图书馆座位预约"></label>
+<label>网站地址<input name="url" required type="text" inputmode="url" placeholder="填写网站地址或域名"></label>
+<label>分类<select name="category"><option>教学教务</option><option>图书馆</option><option>网络缴费</option><option>生活服务</option><option>出行</option><option>其他</option></select></label>
+<label>使用说明<textarea name="note" rows="3" maxlength="300" placeholder="例如：需要校园网，每天 7 点开放预约"></textarea></label>
+<p class="field-error" id="campusLinkError" role="alert"></p>
+<div class="delete-prompt" id="campusLinkDeletePrompt" hidden><p>确认删除这个校园入口？</p><button type="button" class="secondary" data-cancel-link-delete>取消</button><button type="button" class="primary danger-fill" id="campusLinkDeleteConfirm">确认删除入口</button></div>
+<div class="form-actions"><button type="button" class="secondary danger" id="campusLinkDelete" hidden>删除入口</button><button type="button" class="secondary close">取消</button><button class="primary">保存入口</button></div>
+</form></dialog>
+<dialog id="archiveDialog" aria-labelledby="archiveTitle"><form id="archiveForm">
+<div class="dialog-head"><h2 id="archiveTitle">创建学期档案</h2><button type="button" class="close" aria-label="关闭归档窗口">×</button></div>
+<p class="dialog-description">随时手动保存一份科目快照，学期结束时不会自动归档。</p>
+<label>档案名称<input name="name" required maxlength="60" placeholder="例如：2026 秋季学期"></label>
+<fieldset class="selection-field"><legend>选择科目</legend><div id="archiveCourseChoices" class="selection-list"></div></fieldset>
+<label class="check"><input type="checkbox" name="keepActive" checked>保留所选科目在首页（推荐）</label>
+<p class="input-help" id="archiveModeHelp">保存快照后仍可继续使用这些科目，适合相邻学期课程相似的情况。</p>
+<p class="input-help">档案包含所选科目的网站、备注和任务。课程表和校园入口保持独立。</p>
+<p class="field-error" id="archiveError" role="alert"></p>
+<div class="form-actions"><button type="button" class="secondary close">取消</button><button class="primary">创建档案</button></div>
+</form></dialog>
+<dialog id="archiveDetailDialog" class="wide-dialog" aria-labelledby="archiveDetailTitle">
+<div class="dialog-head"><div><h2 id="archiveDetailTitle"></h2><p id="archiveDetailSummary" class="input-help"></p></div><button class="close" aria-label="关闭档案详情">×</button></div>
+<p class="dialog-description">选择要复用的科目。相同网址会跳过，当前科目的备注与账密会保留。如果原入口已转到其他科目，复用会另建入口，账密需重新记录。</p>
+<div id="archiveDetailCourses" class="selection-list"></div>
+<label class="check"><input type="checkbox" id="archiveIncludeTasks">同时带回所选科目的任务（保留原截止时间和完成状态）</label>
+<p class="field-error" id="archiveRestoreError" role="alert"></p>
+<div class="form-actions"><button class="secondary close">关闭</button><button class="primary" id="archiveRestore">复用所选科目</button></div>
+</dialog>
+<dialog id="packDialog" class="wide-dialog" aria-labelledby="packTitle">
+<div class="dialog-head"><h2 id="packTitle">导入科目包</h2><button class="close" aria-label="关闭科目包导入">×</button></div>
+<p class="dialog-description">选择同学分享的 CampusHub JSON 文件，先预览并勾选科目，再合并到你的空间。同名科目会合并，相同网址会跳过。</p>
+<label>选择科目包<input id="packFile" type="file" accept=".json,application/json"></label>
+<p class="input-help">最多 1MB、100 门科目、1000 个网站。科目包只包含网站、用途和科目备注。</p>
+<p class="field-error" id="packError" role="alert"></p>
+<div id="packPreview" class="selection-list"></div>
+<div class="form-actions"><button class="secondary close">取消</button><button id="packConfirm" class="primary" disabled>导入所选科目</button></div>
+</dialog>
+<dialog id="orderDialog" aria-labelledby="orderTitle" aria-describedby="orderHelp">
+<div class="dialog-head"><h2 id="orderTitle">调整顺序</h2><button class="close" aria-label="关闭排序窗口">×</button></div>
+<p id="orderHelp" class="dialog-description"></p>
+<div id="orderList" role="list" aria-label="排序列表"></div>
+<p id="orderError" class="field-error" role="alert"></p>
+<p id="orderStatus" class="input-help" role="status" aria-live="polite"></p>
+<div class="form-actions"><button class="primary close">完成</button></div>
+</dialog>
+<dialog id="syncDialog" class="wide-dialog" aria-labelledby="syncTitle">
+<div class="dialog-head"><div><h2 id="syncTitle">同步码</h2><p class="input-help">复制一段文字，把学习空间带到另一台设备。</p></div><button class="close" aria-label="关闭同步码窗口">×</button></div>
+<div class="sync-modes" role="group" aria-label="同步码操作"><button data-sync-mode="send" aria-pressed="true">生成同步码</button><button data-sync-mode="receive" aria-pressed="false">读取同步码</button></div>
+<section id="syncSend">
+<p class="sync-section-label">当前设备的数据</p><div id="syncCurrentCounts" class="sync-counts"></div>
+<label class="check"><input id="syncIncludeCredentials" type="checkbox" checked>同时携带已加密的网站账密</label>
+<p class="input-help">账密仅携带密文，导入后仍使用原来的六位查看密码。普通 HTTP 页面可搬运密文，查看账密需要 HTTPS 或 localhost。</p>
+<button class="primary full-width" id="syncGenerate">生成同步码</button>
+<div id="syncOutput" hidden><label for="syncCodeOutput">你的同步码 <span id="syncCodeSize" class="optional"></span></label><textarea id="syncCodeOutput" rows="4" readonly spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="syncCopyStatus"></textarea><button class="secondary full-width" id="syncCopy">复制同步码</button><p id="syncCopyStatus" class="input-help" role="status"></p></div>
+<p id="syncGenerateError" class="field-error" role="alert"></p>
+</section>
+<section id="syncReceive" hidden>
+<label for="syncCodeInput">粘贴另一台设备生成的同步码</label><textarea id="syncCodeInput" rows="4" placeholder="CHUB1.…" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="syncReadHelp"></textarea>
+<p id="syncReadHelp" class="input-help">请完整粘贴，支持换行。读取预览时不会修改本机数据。</p>
+<button class="secondary full-width" id="syncRead">读取并预览</button>
+<p id="syncReadError" class="field-error" role="alert"></p>
+<section id="syncPreview" class="sync-preview" hidden aria-label="待导入数据预览">
+<p id="syncCreatedAt" class="sync-section-label"></p><div id="syncIncomingCounts" class="sync-counts"></div><p id="syncSubjectNames" class="input-help"></p><p id="syncCredentialNotice" class="input-help"></p>
+<label class="check"><input id="syncReplaceConsent" type="checkbox">用这份数据替换本机全部内容，不合并；原数据保留一份，可在下方恢复。</label>
+<button id="syncConfirm" class="primary full-width" disabled>确认导入并替换</button>
+</section>
+</section>
+<p class="sync-privacy">手动同步，无需账号，也不会自动更新另一台设备。数据越多，同步码越长（最多 2MB 数据）。同步码中的普通内容未加密，请只传给自己的设备。</p>
+<details id="syncRecovery" class="sync-recovery" hidden><summary>恢复上次导入前的数据</summary><p id="syncBackupSummary" class="input-help"></p><label class="check"><input id="syncRestoreConsent" type="checkbox">恢复会替换当前内容，之后的修改不会保留。</label><button id="syncRestore" class="secondary full-width" disabled>恢复导入前数据</button><p id="syncRestoreError" class="field-error" role="alert"></p></details>
+<p id="syncStatus" class="sync-status" role="status"></p>
+</dialog>
+<dialog id="detail">
+<div id="detailContent">
+</div>
+</dialog>
+<div id="toast" role="status">
+</div>
+<script src="schedule-core.js">
+</script>
+<script src="campus-core.js"></script>
+<script src="sync-core.js"></script>
+<script src="app.js">
+</script>
+<script src="timetable.js">
+</script>
+<script src="campus.js"></script>
+<script src="sync.js"></script>
+</body>
+</html>

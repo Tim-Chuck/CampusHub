@@ -1,0 +1,23 @@
+const {readFileSync}=require('node:fs');const {webcrypto}=require('node:crypto');const vm=require('node:vm');const assert=require('node:assert/strict');
+const source=readFileSync(__dirname+'/app.js','utf8');const scope={crypto:webcrypto,TextEncoder,TextDecoder,btoa,atob};vm.createContext(scope);
+vm.runInContext(source.slice(source.indexOf('const VaultCrypto='),source.indexOf('let pendingVaultAction='))+'\nthis.vault=VaultCrypto;',scope);
+(async()=>{
+ const {vault}=scope,context='campushub:test',pin='283149';
+ const {key,metadata}=await vault.create(pin,context);
+ assert.equal(key.extractable,false);assert.equal(metadata.iterations,600000);
+ const credentials={username:'test_student',password:'OnlyForAutomatedTests!'};
+ const envelope=await vault.seal(key,credentials,context+':site-1');
+ const stored=JSON.stringify({metadata,envelope});
+ for(const secret of [pin,credentials.username,credentials.password])assert.ok(!stored.includes(secret));
+ const unlocked=await vault.unlock(pin,JSON.parse(JSON.stringify(metadata)),context);
+ assert.equal(JSON.stringify(await vault.open(unlocked,JSON.parse(JSON.stringify(envelope)),context+':site-1')),JSON.stringify(credentials));
+ await assert.rejects(()=>vault.unlock('999999',metadata,context));
+ await assert.rejects(()=>vault.unlock(pin,metadata,'campushub:other-account'));
+ await assert.rejects(()=>vault.open(unlocked,envelope,context+':other-site'));
+ const tampered={...envelope,ciphertext:(envelope.ciphertext[0]==='A'?'B':'A')+envelope.ciphertext.slice(1)};
+ await assert.rejects(()=>vault.open(unlocked,tampered,context+':site-1'));
+ await assert.rejects(()=>vault.create('12345',context));
+ await assert.rejects(()=>vault.create('12345a',context));
+ const second=await vault.seal(key,credentials,context+':site-1');assert.notEqual(second.iv,envelope.iv);assert.notEqual(second.ciphertext,envelope.ciphertext);
+ console.log('Vault tests passed: encryption round trip, wrong PIN, tampering, per-account/site binding, PIN format, fresh IVs, no plaintext storage');
+})().catch(error=>{console.error(error);process.exitCode=1});

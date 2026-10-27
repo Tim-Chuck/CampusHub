@@ -1,0 +1,16 @@
+{
+  "name": "campushub",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.cjs",
+    "start:domain": "node server.cjs --public-origin=https://campushub.de5.net",
+    "test": "node --test *.test.cjs"
+  },
+  "dependencies": {
+    "node-ical": "0.27.3"
+  },
+  "devDependencies": {
+    "jsdom": "26.1.0"
+  }
+}
